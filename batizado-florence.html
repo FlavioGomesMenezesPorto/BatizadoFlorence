@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batizado da Florence — Confirmação de presença</title>
+<meta name="description" content="Confirme sua presença no batizado da Florence, 24 de outubro de 2026, na Capela Nossa Senhora das Graças, Araxá - MG.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Parisienne&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --papel:#F9EEE7;
+    --papel-claro:#FDF8F4;
+    --terra:#B96A52;
+    --terra-fundo:#9E5540;
+    --tinta:#453833;
+    --tinta-suave:#8A756B;
+    --linha:#E3CDBF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--papel);
+    background-image:radial-gradient(ellipse at 50% 0%, #FDF6F0 0%, var(--papel) 55%, #F3E4DA 100%);
+    background-attachment:fixed;
+    color:var(--tinta);
+    font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+    font-size:19px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .folha{max-width:38rem;margin:0 auto;padding:3.2rem 1.5rem 4rem}
+
+  .sobre{
+    letter-spacing:.36em;
+    text-transform:uppercase;
+    font-size:.8rem;
+    color:var(--terra);
+    text-align:center;
+    margin:0;
+    font-weight:500;
+    text-indent:.36em;
+  }
+  h1{
+    font-family:"Parisienne","Segoe Script","Snell Roundhand","Brush Script MT",cursive;
+    font-size:clamp(3.8rem,16vw,5.6rem);
+    color:var(--terra);
+    font-weight:400;
+    text-align:center;
+    margin:.05em 0 0;
+    line-height:1.05;
+  }
+  .flor{display:block;margin:.5rem auto 0;width:58px;height:58px;color:var(--terra)}
+  .capela{display:block;width:100%;margin:.8rem auto 0;color:var(--terra)}
+
+  .verso{text-align:center;margin:1.4rem auto 0;max-width:27rem;font-size:1.2rem}
+  .verso em{color:var(--terra);font-style:normal;display:block;margin-top:.75rem}
+
+  .dados{display:grid;grid-template-columns:repeat(3,1fr);margin:2.6rem 0 0;text-align:center}
+  .dados div{padding:0 .7rem}
+  .dados div + div{border-left:1px solid var(--linha)}
+  .dados svg{width:27px;height:27px;color:var(--terra);margin-bottom:.5rem}
+  .dados p{margin:0;font-size:1.03rem;line-height:1.35}
+  .dados .forte{font-size:1.14rem}
+
+  .atalhos{text-align:center;margin:1.5rem 0 0;font-size:1rem}
+  .atalhos a{color:var(--terra);text-decoration:none;border-bottom:1px solid var(--linha);padding-bottom:1px}
+  .atalhos a:hover{border-bottom-color:var(--terra)}
+  .atalhos span{color:var(--linha);margin:0 .7rem}
+
+  hr.regua{border:0;border-top:1px solid var(--linha);margin:2.8rem 0}
+
+  h2{font-size:1.55rem;font-weight:500;text-align:center;margin:0 0 .3rem;color:var(--tinta)}
+  .prazo{text-align:center;color:var(--tinta-suave);font-size:1rem;margin:0 0 1.9rem}
+
+  label{display:block;margin-bottom:1.15rem}
+  .rotulo{display:block;font-size:1rem;color:var(--tinta);margin-bottom:.35rem}
+  .dica{display:block;font-size:.88rem;color:var(--tinta-suave);margin-top:.2rem;line-height:1.4}
+  input[type=text],input[type=tel],input[type=number],input[type=password],textarea{
+    width:100%;font-family:inherit;font-size:1.05rem;color:var(--tinta);
+    background:var(--papel-claro);border:1px solid var(--linha);
+    border-radius:2px;padding:.6rem .7rem;
+  }
+  textarea{min-height:4.5rem;resize:vertical}
+  input:focus,textarea:focus,button:focus-visible,.alternativa:focus-within{outline:2px solid var(--terra);outline-offset:2px}
+  .par{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+  .escolha{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.15rem}
+  .alternativa{
+    border:1px solid var(--linha);background:var(--papel-claro);border-radius:2px;
+    padding:.7rem .8rem;text-align:center;cursor:pointer;font-size:1.02rem;display:block;margin:0;
+  }
+  .alternativa input{position:absolute;opacity:0;width:0;height:0}
+  .alternativa.marcada{border-color:var(--terra);background:#fff;color:var(--terra)}
+
+  button.enviar{
+    width:100%;font-family:inherit;font-size:1.02rem;letter-spacing:.16em;text-transform:uppercase;
+    background:var(--terra);color:#FFF7F2;border:0;border-radius:2px;padding:.85rem 1rem;cursor:pointer;margin-top:.6rem;
+  }
+  button.enviar:hover{background:var(--terra-fundo)}
+  button.enviar[disabled]{opacity:.55;cursor:progress}
+  .erro{color:#9E3B2C;font-size:.95rem;margin:.6rem 0 0;text-align:center;min-height:1.2em}
+
+  .selo{text-align:center;border:1px solid var(--linha);background:var(--papel-claro);padding:2.1rem 1.4rem;border-radius:2px}
+  .selo svg.marca{width:46px;height:46px;color:var(--terra);margin-bottom:.6rem}
+  .selo h2{margin-bottom:.4rem}
+  .selo p{margin:.3rem 0;color:var(--tinta-suave)}
+  .selo button{background:none;border:0;padding:0;margin-top:1rem;font-family:inherit;font-size:1rem;color:var(--terra);text-decoration:underline;cursor:pointer}
+
+  .rodape{text-align:center;color:var(--tinta-suave);font-size:.95rem;margin-top:3rem}
+  .rodape .flor-mini{width:22px;height:22px;color:var(--linha);display:block;margin:0 auto .9rem}
+
+  .painel{max-width:52rem}
+  table{width:100%;border-collapse:collapse;font-size:.98rem;margin-top:1rem}
+  th,td{text-align:left;padding:.5rem;border-bottom:1px solid var(--linha);vertical-align:top}
+  th{color:var(--tinta-suave);font-weight:500;font-size:.9rem}
+  td.num{text-align:center;width:3.2rem}
+  .resumo{display:flex;flex-wrap:wrap;gap:1.7rem;justify-content:center;margin:1.4rem 0}
+  .resumo div{text-align:center}
+  .resumo strong{display:block;font-size:2.3rem;color:var(--terra);font-weight:400;line-height:1}
+  .resumo span{font-size:.92rem;color:var(--tinta-suave)}
+  .acoes{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin:1.4rem 0}
+  .acoes button{font-family:inherit;font-size:.98rem;background:none;border:1px solid var(--terra);color:var(--terra);padding:.5rem 1rem;border-radius:2px;cursor:pointer}
+  .acoes button:hover{background:var(--terra);color:#FFF7F2}
+  .ausente td{color:var(--tinta-suave);font-style:italic}
+  #saida{width:100%;min-height:12rem;margin-top:1rem;font-size:.9rem;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .oculto{display:none !important}
+
+  @media (max-width:520px){
+    body{font-size:18px}
+    .folha{padding-top:2.4rem}
+    .dados{grid-template-columns:1fr;gap:1.6rem}
+    .dados div + div{border-left:0;border-top:1px solid var(--linha);padding-top:1.4rem}
+    .par{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .selo{animation:surge .5s ease-out}
+    @keyframes surge{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<main class="folha" id="tela-convite">
+
+  <p class="sobre">Batizado da</p>
+  <h1>Florence</h1>
+
+  <svg class="flor" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
+    <defs>
+      <path id="petala" d="M41 39.3 C27.5 7.6 72.5 7.6 59 39.3"/>
+    </defs>
+    <use href="#petala"/>
+    <use href="#petala" transform="rotate(72 50 50)"/>
+    <use href="#petala" transform="rotate(144 50 50)"/>
+    <use href="#petala" transform="rotate(216 50 50)"/>
+    <use href="#petala" transform="rotate(288 50 50)"/>
+    <circle cx="50" cy="50" r="5.5"/>
+    <g stroke-width="1.6">
+      <path d="M50 44.5V39M50 55.5V61M44.5 50H39M55.5 50H61"/>
+      <path d="M46.1 46.1 42.2 42.2M53.9 53.9 57.8 57.8M53.9 46.1 57.8 42.2M46.1 53.9 42.2 57.8"/>
+    </g>
+  </svg>
+
+  <svg class="capela" viewBox="0 0 800 430" fill="none" stroke="currentColor"
+       stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <defs>
+      <g id="arvore">
+        <path d="M78 402V332" stroke-width="1.6"/>
+        <path d="M78 358 62 342M78 350 94 334" stroke-width="1.3"/>
+        <path d="M40 320C29 290 47 260 76 260c29 0 47 28 36 58-8 22-60 26-72 2z"/>
+        <path d="M55 300c9-12 24-14 34-6M61 318c13-8 29-6 38 4" stroke-width="1.1" opacity=".75"/>
+      </g>
+      <g id="poste">
+        <path d="M140 402V300"/>
+        <path d="M131 402h18M134 395h12" stroke-width="1.3"/>
+        <path d="M131 300l3-15h12l3 15zM136 285l4-8 4 8"/>
+        <circle cx="140" cy="274" r="2.2"/>
+      </g>
+    </defs>
+
+    <g opacity=".55">
+      <use href="#arvore"/>
+      <use href="#arvore" transform="translate(811 0) scale(-1 1)"/>
+    </g>
+
+    <g opacity=".85">
+      <path d="M168 208 370 112 560 202"/>
+      <path d="M174 216 370 122 560 210" stroke-width="1.1" opacity=".6"/>
+      <path d="M180 208V402M168 208h392"/>
+      <path d="M370 112V88M360 98h20"/>
+
+      <path d="M205 336v-54a15 15 0 0 1 30 0v54zM255 336v-54a15 15 0 0 1 30 0v54z"/>
+      <path d="M455 336v-54a15 15 0 0 1 30 0v54zM505 336v-54a15 15 0 0 1 30 0v54z"/>
+      <path d="M220 282v54M270 282v54M470 282v54M520 282v54" stroke-width="1" opacity=".5"/>
+
+      <path d="M292 300 370 268l78 32M292 300h156M296 308h152" stroke-width="1.4"/>
+      <path d="M298 374v-66h8v66M342 374v-66h8v66M390 374v-66h8v66M434 374v-66h8v66"/>
+      <path d="M352 374v-24a18 18 0 0 1 36 0v24z"/>
+      <path d="M370 374v-42" stroke-width="1" opacity=".5"/>
+      <path d="M286 374h168"/>
+      <path d="M286 374 264 398M454 374l22 24"/>
+      <path d="M280 382h180M272 390h196M264 398h212" stroke-width="1.3"/>
+
+      <path d="M560 402V96h120v306"/>
+      <path d="M552 96h136M552 104h136" stroke-width="1.3"/>
+      <path d="M556 96 620 34l64 62"/>
+      <path d="M620 34V8M609 18h22"/>
+      <path d="M578 152v-26a12 12 0 0 1 24 0v26zM638 152v-26a12 12 0 0 1 24 0v26z"/>
+      <path d="M560 176h120" stroke-width="1.3"/>
+      <circle cx="620" cy="202" r="15"/>
+      <circle cx="620" cy="202" r="8" stroke-width="1.1" opacity=".6"/>
+      <path d="M620 240v80M592 268h56"/>
+      <path d="M556 384h136" stroke-width="1.3"/>
+    </g>
+
+    <g opacity=".7">
+      <use href="#poste"/>
+      <use href="#poste" transform="translate(360 0)"/>
+    </g>
+
+    <path d="M40 402h720" opacity=".5"/>
+    <path d="M96 396h48M690 396h44M500 396h34" stroke-width="1.1" opacity=".3"/>
+  </svg>
+
+  <p class="verso">
+    A vida da Florzinha é testemunho de fé, força e muito amor.
+    <em>Vamos confirmar seu batismo, agradecer e louvar a sua vida.</em>
+  </p>
+
+  <section class="dados" aria-label="Informações do batizado">
+    <div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M12 18c-2-1.6-3-2.6-3-4a1.7 1.7 0 0 1 3-1 1.7 1.7 0 0 1 3 1c0 1.4-1 2.4-3 4z" fill="currentColor" stroke="none"/></svg>
+      <p class="forte">Sábado, 24/10/2026</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <p class="forte">11h00</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      <p>Capela Nossa Senhora<br>das Graças<br>Barreiro, Araxá - MG</p>
+    </div>
+  </section>
+
+  <p class="atalhos">
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=-19.644738,-46.951128" target="_blank" rel="noopener">Como chegar</a>
+    <span>&#8226;</span>
+    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Batizado%20da%20Florence&amp;dates=20261024T140000Z/20261024T160000Z&amp;location=Capela%20Nossa%20Senhora%20das%20Gra%C3%A7as%2C%20Barreiro%2C%20Arax%C3%A1%20-%20MG" target="_blank" rel="noopener">Salvar no calendário</a>
+  </p>
+
+  <hr class="regua">
+
+  <div id="area-formulario">
+    <h2>Confirme sua presença</h2>
+    <p class="prazo" id="texto-prazo">Responda até 14 de outubro</p>
+
+    <form id="formulario" novalidate>
+      <label>
+        <span class="rotulo">Seu nome</span>
+        <input type="text" id="nome" name="nome" autocomplete="name" required placeholder="Nome e sobrenome">
+      </label>
+
+      <label>
+        <span class="rotulo">Telefone ou WhatsApp</span>
+        <input type="tel" id="telefone" name="telefone" autocomplete="tel" placeholder="(34) 90000-0000">
+        <span class="dica">Só para o caso de precisarmos falar com você sobre o dia.</span>
+      </label>
+
+      <div class="escolha" role="radiogroup" aria-label="Você vai ao batizado?">
+        <label class="alternativa marcada" id="alt-sim">
+          <input type="radio" name="presenca" value="sim" checked>
+          Eu vou
+        </label>
+        <label class="alternativa" id="alt-nao">
+          <input type="radio" name="presenca" value="nao">
+          Não vou conseguir
+        </label>
+      </div>
+
+      <div id="bloco-pessoas">
+        <div class="par">
+          <label>
+            <span class="rotulo">Adultos</span>
+            <input type="number" id="adultos" min="1" max="20" step="1" value="1" inputmode="numeric">
+            <span class="dica">Contando com você.</span>
+          </label>
+          <label>
+            <span class="rotulo">Crianças</span>
+            <input type="number" id="criancas" min="0" max="20" step="1" value="0" inputmode="numeric">
+            <span class="dica">Idade até 10 anos.</span>
+          </label>
+        </div>
+
+        <label>
+          <span class="rotulo">Quem vem com você</span>
+          <textarea id="acompanhantes" placeholder="Nomes dos acompanhantes"></textarea>
+          <span class="dica">Ajuda a organizar o buffet e as mesas.</span>
+        </label>
+      </div>
+
+      <label>
+        <span class="rotulo">Recado para a família</span>
+        <textarea id="recado" placeholder="Opcional"></textarea>
+      </label>
+
+      <button type="submit" class="enviar" id="botao-enviar">Confirmar presença</button>
+      <p class="erro" id="erro" role="alert"></p>
+    </form>
+  </div>
+
+  <div id="area-selo" class="selo oculto" aria-live="polite">
+    <svg class="marca" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.4l3 3 6-6.4"/></svg>
+    <h2 id="selo-titulo">Presença confirmada</h2>
+    <p id="selo-texto"></p>
+    <p>24 de outubro, 11h00 — Capela Nossa Senhora das Graças, Araxá.</p>
+    <button type="button" id="botao-editar">Alterar minha resposta</button>
+  </div>
+
+  <p class="rodape">
+    <svg class="flor-mini" id="portinha" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" aria-hidden="true">
+      <use href="#petala"/>
+      <use href="#petala" transform="rotate(72 50 50)"/>
+      <use href="#petala" transform="rotate(144 50 50)"/>
+      <use href="#petala" transform="rotate(216 50 50)"/>
+      <use href="#petala" transform="rotate(288 50 50)"/>
+    </svg>
+    Com carinho, a família da Florence
+  </p>
+</main>
+
+<main class="folha painel oculto" id="tela-lista">
+  <p class="sobre">Lista de convidados</p>
+  <a href="#tela-convite"><h1 style="font-size:clamp(2.6rem,10vw,3.6rem)">Florence</h1></a>
+
+  <div id="portao">
+    <p class="prazo">Digite a senha para ver as confirmações.</p>
+    <label><input type="password" id="senha" autocomplete="current-password"></label>
+    <button type="button" class="enviar" id="botao-entrar">Entrar</button>
+    <p class="erro" id="erro-senha" role="alert"></p>
+  </div>
+
+  <div id="conteudo-lista" class="oculto">
+    <div class="resumo">
+      <div><strong id="t-pessoas">0</strong><span>pessoas no total</span></div>
+      <div><strong id="t-adultos">0</strong><span>adultos</span></div>
+      <div><strong id="t-criancas">0</strong><span>crianças</span></div>
+      <div><strong id="t-respostas">0</strong><span>respostas</span></div>
+      <div><strong id="t-ausentes">0</strong><span>não vêm</span></div>
+    </div>
+
+    <div class="acoes">
+      <button type="button" id="botao-atualizar">Atualizar</button>
+      <button type="button" id="botao-csv">Baixar planilha</button>
+      <button type="button" id="botao-texto">Ver como texto</button>
+    </div>
+
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>Convidado</th><th class="num">Ad.</th><th class="num">Cri.</th>
+          <th>Contato e recado</th><th>Respondeu</th>
+        </tr>
+      </thead>
+      <tbody id="corpo-tabela"></tbody>
+    </table>
+
+    <textarea id="saida" class="oculto" readonly></textarea>
+  </div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var SENHA_DA_LISTA = "florence2026";
+  var PRAZO = new Date(2026, 9, 14, 23, 59, 59);
+
+  var $ = function(id){ return document.getElementById(id); };
+  var meuId = null;
+
+  function guardar(chave, valor, compartilhado){
+    return window.storage.set(chave, JSON.stringify(valor), compartilhado);
+  }
+  async function ler(chave, compartilhado){
+    try{
+      var r = await window.storage.get(chave, compartilhado);
+      return r ? JSON.parse(r.value) : null;
+    }catch(e){ return null; }
+  }
+  function novoId(){ return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function foraDoPrazo(){ return new Date() > PRAZO; }
+  function primeiroNome(n){ return n.split(" ")[0]; }
+
+  function atualizarEscolha(){
+    var vai = document.querySelector('input[name=presenca]:checked').value === "sim";
+    $("alt-sim").classList.toggle("marcada", vai);
+    $("alt-nao").classList.toggle("marcada", !vai);
+    $("bloco-pessoas").classList.toggle("oculto", !vai);
+    $("botao-enviar").textContent = vai ? "Confirmar presença" : "Enviar resposta";
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=presenca]'), function(r){
+    r.addEventListener("change", atualizarEscolha);
+  });
+
+  $("formulario").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    var erro = $("erro");
+    erro.textContent = "";
+
+    var nome = $("nome").value.trim();
+    if(nome.length < 3){
+      erro.textContent = "Escreva seu nome para continuar.";
+      $("nome").focus();
+      return;
+    }
+
+    var vai = document.querySelector('input[name=presenca]:checked').value === "sim";
+    var adultos = vai ? Math.max(1, Math.min(20, parseInt($("adultos").value,10) || 1)) : 0;
+    var criancas = vai ? Math.max(0, Math.min(20, parseInt($("criancas").value,10) || 0)) : 0;
+
+    var registro = {
+      id: meuId || novoId(),
+      nome: nome,
+      telefone: $("telefone").value.trim(),
+      vai: vai,
+      adultos: adultos,
+      criancas: criancas,
+      acompanhantes: vai ? $("acompanhantes").value.trim() : "",
+      recado: $("recado").value.trim(),
+      quando: new Date().toISOString(),
+      atrasado: foraDoPrazo()
+    };
+
+    var botao = $("botao-enviar");
+    botao.disabled = true;
+    botao.textContent = "Enviando…";
+
+    try{
+      await guardar("rsvp:" + registro.id, registro, true);
+      await guardar("minha-resposta", registro, false);
+      meuId = registro.id;
+      mostrarSelo(registro);
+    }catch(e){
+      erro.textContent = "A resposta não foi salva. Verifique a conexão e envie de novo.";
+      botao.disabled = false;
+      atualizarEscolha();
+    }
+  });
+
+  function mostrarSelo(r){
+    $("area-formulario").classList.add("oculto");
+    $("area-selo").classList.remove("oculto");
+    if(r.vai){
+      var total = r.adultos + r.criancas;
+      $("selo-titulo").textContent = "Presença confirmada";
+      $("selo-texto").textContent = "Obrigado, " + primeiroNome(r.nome) + ". Guardamos " +
+        total + (total === 1 ? " lugar" : " lugares") +
+        (r.criancas ? " (" + r.adultos + " adulto" + (r.adultos>1?"s":"") + " e " + r.criancas + " criança" + (r.criancas>1?"s":"") + ")" : "") + ".";
+    }else{
+      $("selo-titulo").textContent = "Resposta registrada";
+      $("selo-texto").textContent = "Que pena, " + primeiroNome(r.nome) + ". Vamos sentir sua falta.";
+    }
+    $("area-selo").scrollIntoView({behavior:"smooth", block:"center"});
+  }
+
+  $("botao-editar").addEventListener("click", function(){
+    $("area-selo").classList.add("oculto");
+    $("area-formulario").classList.remove("oculto");
+    $("botao-enviar").disabled = false;
+    atualizarEscolha();
+    $("nome").focus();
+  });
+
+  (async function iniciar(){
+    if(foraDoPrazo()){
+      $("texto-prazo").textContent = "O prazo era 14 de outubro, mas ainda dá para avisar.";
+    }
+    var anterior = await ler("minha-resposta", false);
+    if(anterior && anterior.nome){
+      meuId = anterior.id;
+      $("nome").value = anterior.nome;
+      $("telefone").value = anterior.telefone || "";
+      $("adultos").value = anterior.adultos || 1;
+      $("criancas").value = anterior.criancas || 0;
+      $("acompanhantes").value = anterior.acompanhantes || "";
+      $("recado").value = anterior.recado || "";
+      document.querySelector('input[name=presenca][value="' + (anterior.vai ? "sim" : "nao") + '"]').checked = true;
+      atualizarEscolha();
+      mostrarSelo(anterior);
+    }
+    verificarRota();
+  })();
+
+  function verificarRota(){
+    var naLista = location.hash.replace("#","").toLowerCase() === "lista";
+    $("tela-convite").classList.toggle("oculto", naLista);
+    $("tela-lista").classList.toggle("oculto", !naLista);
+    if(naLista) $("senha").focus();
+  }
+  window.addEventListener("hashchange", verificarRota);
+
+  // Entrada discreta: cinco toques na florzinha do rodapé abrem a lista.
+  var toques = 0, ultimoToque = 0;
+  $("portinha").style.cursor = "pointer";
+  $("portinha").addEventListener("click", function(){
+    var agora = Date.now();
+    toques = (agora - ultimoToque < 1200) ? toques + 1 : 1;
+    ultimoToque = agora;
+    if(toques >= 5){
+      toques = 0;
+      $("tela-convite").classList.add("oculto");
+      $("tela-lista").classList.remove("oculto");
+      $("senha").focus();
+    }
+  });
+
+  $("botao-entrar").addEventListener("click", entrar);
+  $("senha").addEventListener("keydown", function(e){ if(e.key === "Enter") entrar(); });
+
+  function entrar(){
+    if($("senha").value === SENHA_DA_LISTA){
+      $("portao").classList.add("oculto");
+      $("conteudo-lista").classList.remove("oculto");
+      carregarLista();
+    }else{
+      $("erro-senha").textContent = "Senha incorreta.";
+    }
+  }
+
+  var listaAtual = [];
+
+  async function carregarLista(){
+    var corpo = $("corpo-tabela");
+    corpo.innerHTML = '<tr><td colspan="5">Carregando…</td></tr>';
+    var registros = [];
+    try{
+      var chaves = await window.storage.list("rsvp:", true);
+      var nomes = (chaves && chaves.keys) ? chaves.keys : [];
+      for(var i=0; i<nomes.length; i++){
+        var r = await ler(nomes[i], true);
+        if(r && r.nome) registros.push(r);
+      }
+    }catch(e){
+      corpo.innerHTML = '<tr><td colspan="5">Não foi possível carregar. Toque em Atualizar.</td></tr>';
+      return;
+    }
+
+    registros.sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); });
+    listaAtual = registros;
+
+    var adultos = 0, criancas = 0, ausentes = 0;
+    registros.forEach(function(r){
+      if(r.vai){ adultos += r.adultos; criancas += r.criancas; } else { ausentes++; }
+    });
+
+    $("t-adultos").textContent = adultos;
+    $("t-criancas").textContent = criancas;
+    $("t-pessoas").textContent = adultos + criancas;
+    $("t-respostas").textContent = registros.length;
+    $("t-ausentes").textContent = ausentes;
+
+    if(!registros.length){
+      corpo.innerHTML = '<tr><td colspan="5">Ninguém respondeu ainda.</td></tr>';
+      return;
+    }
+
+    corpo.innerHTML = "";
+    registros.forEach(function(r){
+      var tr = document.createElement("tr");
+      if(!r.vai) tr.className = "ausente";
+      var detalhe = [r.telefone, r.acompanhantes, r.recado].filter(Boolean).join(" · ");
+      tr.appendChild(celula(r.nome + (r.atrasado ? " (fora do prazo)" : "")));
+      tr.appendChild(celula(r.vai ? r.adultos : "—", "num"));
+      tr.appendChild(celula(r.vai ? r.criancas : "—", "num"));
+      tr.appendChild(celula(detalhe || "—"));
+      tr.appendChild(celula(dataCurta(r.quando)));
+      corpo.appendChild(tr);
+    });
+  }
+
+  function celula(texto, classe){
+    var td = document.createElement("td");
+    td.textContent = texto;
+    if(classe) td.className = classe;
+    return td;
+  }
+
+  function dataCurta(iso){
+    try{
+      return new Date(iso).toLocaleDateString("pt-BR", {day:"2-digit", month:"2-digit"});
+    }catch(e){ return "—"; }
+  }
+
+  function montarCsv(){
+    var linhas = [["Nome","Vai","Adultos","Criancas","Acompanhantes","Telefone","Recado","Respondeu em"]];
+    listaAtual.forEach(function(r){
+      linhas.push([
+        r.nome, r.vai ? "sim" : "nao", r.vai ? r.adultos : 0, r.vai ? r.criancas : 0,
+        r.acompanhantes || "", r.telefone || "", r.recado || "", dataCurta(r.quando)
+      ]);
+    });
+    return linhas.map(function(l){
+      return l.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(";");
+    }).join("\n");
+  }
+
+  $("botao-atualizar").addEventListener("click", carregarLista);
+
+  $("botao-csv").addEventListener("click", function(){
+    try{
+      var blob = new Blob(["\ufeff" + montarCsv()], {type:"text/csv;charset=utf-8"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "convidados-batizado-florence.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }catch(e){ mostrarTexto(); }
+  });
+
+  $("botao-texto").addEventListener("click", mostrarTexto);
+
+  function mostrarTexto(){
+    var saida = $("saida");
+    saida.value = montarCsv();
+    saida.classList.remove("oculto");
+    saida.focus();
+    saida.select();
+  }
+
+  atualizarEscolha();
+})();
+</script>
+</body>
+</html>
