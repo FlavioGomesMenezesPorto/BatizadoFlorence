@@ -113,7 +113,7 @@
 
   .painel{max-width:52rem}
   .tabela-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:1rem}
-  table{width:100%;min-width:34rem;border-collapse:collapse;font-size:.98rem}
+  table{width:100%;min-width:38rem;border-collapse:collapse;font-size:.98rem}
   th,td{text-align:left;padding:.5rem;border-bottom:1px solid var(--linha);vertical-align:top}
   th{color:var(--tinta-suave);font-weight:500;font-size:.9rem}
   td.num{text-align:center;width:3.2rem}
@@ -125,6 +125,8 @@
   .acoes button{font-family:inherit;font-size:.98rem;background:none;border:1px solid var(--terra);color:var(--terra);padding:.5rem 1rem;border-radius:2px;cursor:pointer}
   .acoes button:hover{background:var(--terra);color:#FFF7F2}
   .ausente td{color:var(--tinta-suave);font-style:italic}
+  button.excluir{font-family:inherit;font-size:.85rem;background:none;border:1px solid var(--linha);color:var(--tinta-suave);padding:.3rem .6rem;border-radius:2px;cursor:pointer;white-space:nowrap}
+  button.excluir:hover{border-color:#9E3B2C;color:#9E3B2C}
   #saida{width:100%;min-height:12rem;margin-top:1rem;font-size:.9rem;font-family:ui-monospace,Menlo,Consolas,monospace}
   .oculto{display:none !important}
 
@@ -372,7 +374,7 @@
         <thead>
           <tr>
             <th>Convidado</th><th class="num">Ad.</th><th class="num">Cri.</th>
-            <th>Contato e recado</th><th>Respondeu</th>
+            <th>Contato e recado</th><th>Respondeu</th><th></th>
           </tr>
         </thead>
         <tbody id="corpo-tabela"></tbody>
@@ -586,7 +588,7 @@
     $("t-ausentes").textContent = ausentes;
 
     if(!registros.length){
-      corpo.innerHTML = '<tr><td colspan="5">Ninguém respondeu ainda.</td></tr>';
+      corpo.innerHTML = '<tr><td colspan="6">Ninguém respondeu ainda.</td></tr>';
       return;
     }
 
@@ -600,8 +602,32 @@
       tr.appendChild(celula(r.vai ? r.criancas : "—", "num"));
       tr.appendChild(celula(detalhe || "—"));
       tr.appendChild(celula(dataCurta(r.atualizado_em || r.criado_em)));
+
+      var tdAcao = document.createElement("td");
+      var botaoExcluir = document.createElement("button");
+      botaoExcluir.type = "button";
+      botaoExcluir.className = "excluir";
+      botaoExcluir.textContent = "Excluir";
+      botaoExcluir.addEventListener("click", function(){ excluirRegistro(r.id, r.nome); });
+      tdAcao.appendChild(botaoExcluir);
+      tr.appendChild(tdAcao);
+
       corpo.appendChild(tr);
     });
+  }
+
+  async function excluirRegistro(id, nome){
+    if(!window.confirm('Excluir a confirmação de "' + nome + '"?')) return;
+    try{
+      var resp = await fetch("/api/rsvp?id=" + encodeURIComponent(id), {
+        method: "DELETE",
+        headers: { "x-admin-password": senhaAtual }
+      });
+      if(resp.ok){
+        listaAtual = listaAtual.filter(function(r){ return r.id !== id; });
+        renderizarLista();
+      }
+    }catch(e){}
   }
 
   function celula(texto, classe){

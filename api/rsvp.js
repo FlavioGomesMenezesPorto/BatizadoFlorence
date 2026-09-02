@@ -83,6 +83,24 @@ async function tratarGet(req, res) {
   return res.status(200).json(rows);
 }
 
+async function tratarDelete(req, res) {
+  const senha = req.headers["x-admin-password"];
+  if (!process.env.ADMIN_PASSWORD || senha !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "senha_invalida" });
+  }
+
+  const { id } = req.query;
+  if (!id || !ID_VALIDO.test(String(id))) {
+    return res.status(400).json({ error: "id_invalido" });
+  }
+
+  const { rows } = await sql`DELETE FROM rsvps WHERE id = ${id} RETURNING id`;
+  if (!rows[0]) {
+    return res.status(404).json({ error: "nao_encontrado" });
+  }
+  return res.status(200).json({ ok: true });
+}
+
 module.exports = async (req, res) => {
   try {
     await garantirTabela();
@@ -93,7 +111,10 @@ module.exports = async (req, res) => {
     if (req.method === "GET") {
       return await tratarGet(req, res);
     }
-    res.setHeader("Allow", "GET, POST");
+    if (req.method === "DELETE") {
+      return await tratarDelete(req, res);
+    }
+    res.setHeader("Allow", "GET, POST, DELETE");
     return res.status(405).json({ error: "method_not_allowed" });
   } catch (err) {
     console.error(err);
