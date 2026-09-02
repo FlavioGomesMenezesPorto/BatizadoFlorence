@@ -374,22 +374,12 @@
 (function(){
   "use strict";
 
-  var SENHA_DA_LISTA = "florence2026";
   var PRAZO = new Date(2026, 9, 14, 23, 59, 59);
-
   var $ = function(id){ return document.getElementById(id); };
   var meuId = null;
+  var listaAtual = [];
+  var senhaAtual = "";
 
-  function guardar(chave, valor, compartilhado){
-    return window.storage.set(chave, JSON.stringify(valor), compartilhado);
-  }
-  async function ler(chave, compartilhado){
-    try{
-      var r = await window.storage.get(chave, compartilhado);
-      return r ? JSON.parse(r.value) : null;
-    }catch(e){ return null; }
-  }
-  function novoId(){ return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function foraDoPrazo(){ return new Date() > PRAZO; }
   function primeiroNome(n){ return n.split(" ")[0]; }
 
@@ -404,50 +394,16 @@
     r.addEventListener("change", atualizarEscolha);
   });
 
-  $("formulario").addEventListener("submit", async function(ev){
-    ev.preventDefault();
-    var erro = $("erro");
-    erro.textContent = "";
-
-    var nome = $("nome").value.trim();
-    if(nome.length < 3){
-      erro.textContent = "Escreva seu nome para continuar.";
-      $("nome").focus();
-      return;
-    }
-
-    var vai = document.querySelector('input[name=presenca]:checked').value === "sim";
-    var adultos = vai ? Math.max(1, Math.min(20, parseInt($("adultos").value,10) || 1)) : 0;
-    var criancas = vai ? Math.max(0, Math.min(20, parseInt($("criancas").value,10) || 0)) : 0;
-
-    var registro = {
-      id: meuId || novoId(),
-      nome: nome,
-      telefone: $("telefone").value.trim(),
-      vai: vai,
-      adultos: adultos,
-      criancas: criancas,
-      acompanhantes: vai ? $("acompanhantes").value.trim() : "",
-      recado: $("recado").value.trim(),
-      quando: new Date().toISOString(),
-      atrasado: foraDoPrazo()
-    };
-
-    var botao = $("botao-enviar");
-    botao.disabled = true;
-    botao.textContent = "Enviando…";
-
-    try{
-      await guardar("rsvp:" + registro.id, registro, true);
-      await guardar("minha-resposta", registro, false);
-      meuId = registro.id;
-      mostrarSelo(registro);
-    }catch(e){
-      erro.textContent = "A resposta não foi salva. Verifique a conexão e envie de novo.";
-      botao.disabled = false;
-      atualizarEscolha();
-    }
-  });
+  function preencherFormulario(r){
+    $("nome").value = r.nome;
+    $("telefone").value = r.telefone || "";
+    $("adultos").value = r.adultos || 1;
+    $("criancas").value = r.criancas || 0;
+    $("acompanhantes").value = r.acompanhantes || "";
+    $("recado").value = r.recado || "";
+    document.querySelector('input[name=presenca][value="' + (r.vai ? "sim" : "nao") + '"]').checked = true;
+    atualizarEscolha();
+  }
 
   function mostrarSelo(r){
     $("area-formulario").classList.add("oculto");
@@ -473,23 +429,76 @@
     $("nome").focus();
   });
 
+  $("formulario").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    var erro = $("erro");
+    erro.textContent = "";
+
+    var nome = $("nome").value.trim();
+    if(nome.length < 3){
+      erro.textContent = "Escreva seu nome para continuar.";
+      $("nome").focus();
+      return;
+    }
+
+    var vai = document.querySelector('input[name=presenca]:checked').value === "sim";
+    var adultos = vai ? Math.max(1, Math.min(20, parseInt($("adultos").value,10) || 1)) : 0;
+    var criancas = vai ? Math.max(0, Math.min(20, parseInt($("criancas").value,10) || 0)) : 0;
+
+    var registro = {
+      id: meuId || undefined,
+      nome: nome,
+      telefone: $("telefone").value.trim(),
+      vai: vai,
+      adultos: adultos,
+      criancas: criancas,
+      acompanhantes: vai ? $("acompanhantes").value.trim() : "",
+      recado: $("recado").value.trim()
+    };
+
+    var botao = $("botao-enviar");
+    botao.disabled = true;
+    botao.textContent = "Enviando…";
+
+    try{
+      var resp = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(registro)
+      });
+      if(!resp.ok) throw new Error("falha ao salvar");
+      var salvo = await resp.json();
+      meuId = salvo.id;
+      try{ localStorage.setItem("florence-meu-id", salvo.id); }catch(e){}
+      mostrarSelo(salvo);
+    }catch(e){
+      erro.textContent = "A resposta não foi salva. Verifique a conexão e envie de novo.";
+      botao.disabled = false;
+      atualizarEscolha();
+    }
+  });
+
   (async function iniciar(){
     if(foraDoPrazo()){
       $("texto-prazo").textContent = "O prazo era 14 de outubro, mas ainda dá para avisar.";
     }
-    var anterior = await ler("minha-resposta", false);
-    if(anterior && anterior.nome){
-      meuId = anterior.id;
-      $("nome").value = anterior.nome;
-      $("telefone").value = anterior.telefone || "";
-      $("adultos").value = anterior.adultos || 1;
-      $("criancas").value = anterior.criancas || 0;
-      $("acompanhantes").value = anterior.acompanhantes || "";
-      $("recado").value = anterior.recado || "";
-      document.querySelector('input[name=presenca][value="' + (anterior.vai ? "sim" : "nao") + '"]').checked = true;
-      atualizarEscolha();
-      mostrarSelo(anterior);
+
+    var meuIdSalvo = null;
+    try{ meuIdSalvo = localStorage.getItem("florence-meu-id"); }catch(e){}
+    if(meuIdSalvo){
+      try{
+        var resp = await fetch("/api/rsvp?id=" + encodeURIComponent(meuIdSalvo));
+        if(resp.ok){
+          var anterior = await resp.json();
+          if(anterior && anterior.nome){
+            meuId = anterior.id;
+            preencherFormulario(anterior);
+            mostrarSelo(anterior);
+          }
+        }
+      }catch(e){}
     }
+
     verificarRota();
   })();
 
@@ -519,36 +528,38 @@
   $("botao-entrar").addEventListener("click", entrar);
   $("senha").addEventListener("keydown", function(e){ if(e.key === "Enter") entrar(); });
 
-  function entrar(){
-    if($("senha").value === SENHA_DA_LISTA){
+  async function entrar(){
+    var tentativa = $("senha").value;
+    $("erro-senha").textContent = "";
+    try{
+      var resp = await fetch("/api/rsvp", { headers: { "x-admin-password": tentativa } });
+      if(!resp.ok){
+        $("erro-senha").textContent = "Senha incorreta.";
+        return;
+      }
+      senhaAtual = tentativa;
+      listaAtual = await resp.json();
       $("portao").classList.add("oculto");
       $("conteudo-lista").classList.remove("oculto");
-      carregarLista();
-    }else{
-      $("erro-senha").textContent = "Senha incorreta.";
+      renderizarLista();
+    }catch(e){
+      $("erro-senha").textContent = "Não foi possível entrar. Tente de novo.";
     }
   }
 
-  var listaAtual = [];
-
-  async function carregarLista(){
-    var corpo = $("corpo-tabela");
-    corpo.innerHTML = '<tr><td colspan="5">Carregando…</td></tr>';
-    var registros = [];
+  async function atualizarLista(){
     try{
-      var chaves = await window.storage.list("rsvp:", true);
-      var nomes = (chaves && chaves.keys) ? chaves.keys : [];
-      for(var i=0; i<nomes.length; i++){
-        var r = await ler(nomes[i], true);
-        if(r && r.nome) registros.push(r);
+      var resp = await fetch("/api/rsvp", { headers: { "x-admin-password": senhaAtual } });
+      if(resp.ok){
+        listaAtual = await resp.json();
+        renderizarLista();
       }
-    }catch(e){
-      corpo.innerHTML = '<tr><td colspan="5">Não foi possível carregar. Toque em Atualizar.</td></tr>';
-      return;
-    }
+    }catch(e){}
+  }
 
-    registros.sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); });
-    listaAtual = registros;
+  function renderizarLista(){
+    var corpo = $("corpo-tabela");
+    var registros = listaAtual.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); });
 
     var adultos = 0, criancas = 0, ausentes = 0;
     registros.forEach(function(r){
@@ -575,7 +586,7 @@
       tr.appendChild(celula(r.vai ? r.adultos : "—", "num"));
       tr.appendChild(celula(r.vai ? r.criancas : "—", "num"));
       tr.appendChild(celula(detalhe || "—"));
-      tr.appendChild(celula(dataCurta(r.quando)));
+      tr.appendChild(celula(dataCurta(r.atualizado_em || r.criado_em)));
       corpo.appendChild(tr);
     });
   }
@@ -598,7 +609,7 @@
     listaAtual.forEach(function(r){
       linhas.push([
         r.nome, r.vai ? "sim" : "nao", r.vai ? r.adultos : 0, r.vai ? r.criancas : 0,
-        r.acompanhantes || "", r.telefone || "", r.recado || "", dataCurta(r.quando)
+        r.acompanhantes || "", r.telefone || "", r.recado || "", dataCurta(r.atualizado_em || r.criado_em)
       ]);
     });
     return linhas.map(function(l){
@@ -606,18 +617,16 @@
     }).join("\n");
   }
 
-  $("botao-atualizar").addEventListener("click", carregarLista);
+  $("botao-atualizar").addEventListener("click", atualizarLista);
 
   $("botao-csv").addEventListener("click", function(){
-    try{
-      var blob = new Blob(["\ufeff" + montarCsv()], {type:"text/csv;charset=utf-8"});
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "convidados-batizado-florence.csv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }catch(e){ mostrarTexto(); }
+    var blob = new Blob(["﻿" + montarCsv()], {type:"text/csv;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "convidados-batizado-florence.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   });
 
   $("botao-texto").addEventListener("click", mostrarTexto);
