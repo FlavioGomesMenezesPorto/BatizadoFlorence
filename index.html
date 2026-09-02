@@ -112,7 +112,8 @@
   .rodape .flor-mini{width:22px;height:22px;color:var(--linha);display:block;margin:0 auto .9rem}
 
   .painel{max-width:52rem}
-  table{width:100%;border-collapse:collapse;font-size:.98rem;margin-top:1rem}
+  .tabela-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:1rem}
+  table{width:100%;min-width:34rem;border-collapse:collapse;font-size:.98rem}
   th,td{text-align:left;padding:.5rem;border-bottom:1px solid var(--linha);vertical-align:top}
   th{color:var(--tinta-suave);font-weight:500;font-size:.9rem}
   td.num{text-align:center;width:3.2rem}
@@ -129,10 +130,19 @@
 
   @media (max-width:520px){
     body{font-size:18px}
-    .folha{padding-top:2.4rem}
+    .folha{padding:2.4rem 1.1rem 3.2rem}
     .dados{grid-template-columns:1fr;gap:1.6rem}
     .dados div + div{border-left:0;border-top:1px solid var(--linha);padding-top:1.4rem}
     .par{grid-template-columns:1fr}
+    .resumo{gap:1.1rem 1.6rem}
+    .acoes{gap:.6rem}
+    .acoes button{flex:1 1 auto}
+  }
+  @media (max-width:380px){
+    .escolha{grid-template-columns:1fr}
+  }
+  @media (min-width:901px){
+    .folha{padding-top:4rem}
   }
   @media (prefers-reduced-motion:no-preference){
     .selo{animation:surge .5s ease-out}
@@ -357,15 +367,17 @@
       <button type="button" id="botao-texto">Ver como texto</button>
     </div>
 
-    <table id="tabela">
-      <thead>
-        <tr>
-          <th>Convidado</th><th class="num">Ad.</th><th class="num">Cri.</th>
-          <th>Contato e recado</th><th>Respondeu</th>
-        </tr>
-      </thead>
-      <tbody id="corpo-tabela"></tbody>
-    </table>
+    <div class="tabela-scroll">
+      <table id="tabela">
+        <thead>
+          <tr>
+            <th>Convidado</th><th class="num">Ad.</th><th class="num">Cri.</th>
+            <th>Contato e recado</th><th>Respondeu</th>
+          </tr>
+        </thead>
+        <tbody id="corpo-tabela"></tbody>
+      </table>
+    </div>
 
     <textarea id="saida" class="oculto" readonly></textarea>
   </div>
