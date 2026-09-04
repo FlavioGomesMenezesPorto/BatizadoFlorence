@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Parisienne&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath id='p' d='M41 39.3C27.5 7.6 72.5 7.6 59 39.3' fill='none' stroke='%23B96A52' stroke-width='6' stroke-linejoin='round'/%3E%3Cuse href='%23p' transform='rotate(72 50 50)'/%3E%3Cuse href='%23p' transform='rotate(144 50 50)'/%3E%3Cuse href='%23p' transform='rotate(216 50 50)'/%3E%3Cuse href='%23p' transform='rotate(288 50 50)'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23B96A52'/%3E%3C/svg%3E">
 <style>
   :root{
     --papel:#F9EEE7;
@@ -32,27 +33,8 @@
   }
   .folha{max-width:38rem;margin:0 auto;padding:3.2rem 1.5rem 4rem}
 
-  .sobre{
-    letter-spacing:.36em;
-    text-transform:uppercase;
-    font-size:.8rem;
-    color:var(--terra);
-    text-align:center;
-    margin:0;
-    font-weight:500;
-    text-indent:.36em;
-  }
-  h1{
-    font-family:"Parisienne","Segoe Script","Snell Roundhand","Brush Script MT",cursive;
-    font-size:clamp(3.8rem,16vw,5.6rem);
-    color:var(--terra);
-    font-weight:400;
-    text-align:center;
-    margin:.05em 0 0;
-    line-height:1.05;
-  }
-  .flor{display:block;margin:.5rem auto 0;width:58px;height:58px;color:var(--terra)}
-  .capela{display:block;width:100%;margin:.8rem auto 0;color:var(--terra)}
+  .oculto-visual{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .capa{display:block;width:100%;border-radius:2px}
 
   .verso{text-align:center;margin:1.4rem auto 0;max-width:27rem;font-size:1.2rem}
   .verso em{color:var(--terra);font-style:normal;display:block;margin-top:.75rem}
@@ -156,85 +138,8 @@
 
 <main class="folha" id="tela-convite">
 
-  <p class="sobre">Batizado da</p>
-  <h1>Florence</h1>
-
-  <svg class="flor" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
-    <defs>
-      <path id="petala" d="M41 39.3 C27.5 7.6 72.5 7.6 59 39.3"/>
-    </defs>
-    <use href="#petala"/>
-    <use href="#petala" transform="rotate(72 50 50)"/>
-    <use href="#petala" transform="rotate(144 50 50)"/>
-    <use href="#petala" transform="rotate(216 50 50)"/>
-    <use href="#petala" transform="rotate(288 50 50)"/>
-    <circle cx="50" cy="50" r="5.5"/>
-    <g stroke-width="1.6">
-      <path d="M50 44.5V39M50 55.5V61M44.5 50H39M55.5 50H61"/>
-      <path d="M46.1 46.1 42.2 42.2M53.9 53.9 57.8 57.8M53.9 46.1 57.8 42.2M46.1 53.9 42.2 57.8"/>
-    </g>
-  </svg>
-
-  <svg class="capela" viewBox="0 0 800 430" fill="none" stroke="currentColor"
-       stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
-    <defs>
-      <g id="arvore">
-        <path d="M78 402V332" stroke-width="1.6"/>
-        <path d="M78 358 62 342M78 350 94 334" stroke-width="1.3"/>
-        <path d="M40 320C29 290 47 260 76 260c29 0 47 28 36 58-8 22-60 26-72 2z"/>
-        <path d="M55 300c9-12 24-14 34-6M61 318c13-8 29-6 38 4" stroke-width="1.1" opacity=".75"/>
-      </g>
-      <g id="poste">
-        <path d="M140 402V300"/>
-        <path d="M131 402h18M134 395h12" stroke-width="1.3"/>
-        <path d="M131 300l3-15h12l3 15zM136 285l4-8 4 8"/>
-        <circle cx="140" cy="274" r="2.2"/>
-      </g>
-    </defs>
-
-    <g opacity=".55">
-      <use href="#arvore"/>
-      <use href="#arvore" transform="translate(811 0) scale(-1 1)"/>
-    </g>
-
-    <g opacity=".85">
-      <path d="M168 208 370 112 560 202"/>
-      <path d="M174 216 370 122 560 210" stroke-width="1.1" opacity=".6"/>
-      <path d="M180 208V402M168 208h392"/>
-      <path d="M370 112V88M360 98h20"/>
-
-      <path d="M205 336v-54a15 15 0 0 1 30 0v54zM255 336v-54a15 15 0 0 1 30 0v54z"/>
-      <path d="M455 336v-54a15 15 0 0 1 30 0v54zM505 336v-54a15 15 0 0 1 30 0v54z"/>
-      <path d="M220 282v54M270 282v54M470 282v54M520 282v54" stroke-width="1" opacity=".5"/>
-
-      <path d="M292 300 370 268l78 32M292 300h156M296 308h152" stroke-width="1.4"/>
-      <path d="M298 374v-66h8v66M342 374v-66h8v66M390 374v-66h8v66M434 374v-66h8v66"/>
-      <path d="M352 374v-24a18 18 0 0 1 36 0v24z"/>
-      <path d="M370 374v-42" stroke-width="1" opacity=".5"/>
-      <path d="M286 374h168"/>
-      <path d="M286 374 264 398M454 374l22 24"/>
-      <path d="M280 382h180M272 390h196M264 398h212" stroke-width="1.3"/>
-
-      <path d="M560 402V96h120v306"/>
-      <path d="M552 96h136M552 104h136" stroke-width="1.3"/>
-      <path d="M556 96 620 34l64 62"/>
-      <path d="M620 34V8M609 18h22"/>
-      <path d="M578 152v-26a12 12 0 0 1 24 0v26zM638 152v-26a12 12 0 0 1 24 0v26z"/>
-      <path d="M560 176h120" stroke-width="1.3"/>
-      <circle cx="620" cy="202" r="15"/>
-      <circle cx="620" cy="202" r="8" stroke-width="1.1" opacity=".6"/>
-      <path d="M620 240v80M592 268h56"/>
-      <path d="M556 384h136" stroke-width="1.3"/>
-    </g>
-
-    <g opacity=".7">
-      <use href="#poste"/>
-      <use href="#poste" transform="translate(360 0)"/>
-    </g>
-
-    <path d="M40 402h720" opacity=".5"/>
-    <path d="M96 396h48M690 396h44M500 396h34" stroke-width="1.1" opacity=".3"/>
-  </svg>
+  <h1 class="oculto-visual">Batizado da Florence</h1>
+  <img class="capa" src="assets/capela-florence.jpg" alt="Batizado da Florence — ilustração da Capela Nossa Senhora das Graças">
 
   <p class="verso">
     A vida da Florzinha é testemunho de fé, força e muito amor.
@@ -332,6 +237,9 @@
 
   <p class="rodape">
     <svg class="flor-mini" id="portinha" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" aria-hidden="true">
+      <defs>
+        <path id="petala" d="M41 39.3 C27.5 7.6 72.5 7.6 59 39.3"/>
+      </defs>
       <use href="#petala"/>
       <use href="#petala" transform="rotate(72 50 50)"/>
       <use href="#petala" transform="rotate(144 50 50)"/>
