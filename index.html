@@ -109,8 +109,9 @@
   .ausente td{color:var(--tinta-suave);font-style:italic}
   button.excluir{font-family:inherit;font-size:.85rem;background:none;border:1px solid var(--linha);color:var(--tinta-suave);padding:.3rem .6rem;border-radius:2px;cursor:pointer;white-space:nowrap}
   button.excluir:hover{border-color:#9E3B2C;color:#9E3B2C}
-  #saida{width:100%;min-height:12rem;margin-top:1rem;font-size:.9rem;font-family:ui-monospace,Menlo,Consolas,monospace}
   .oculto{display:none !important}
+
+  .titulo-lista{font-size:clamp(2rem,7vw,2.6rem);font-weight:500;text-align:center;color:var(--tinta);margin:.8rem 0 0}
 
   @media (max-width:520px){
     body{font-size:18px}
@@ -252,8 +253,7 @@
 
 <main class="folha painel oculto" id="tela-lista">
   <p class="atalhos"><a href="#tela-convite">&larr; Voltar ao convite</a></p>
-  <p class="sobre">Lista de convidados</p>
-  <a href="#tela-convite"><h1 style="font-size:clamp(2.6rem,10vw,3.6rem)">Florence</h1></a>
+  <h1 class="titulo-lista">Lista de convidados</h1>
 
   <div id="portao">
     <p class="prazo">Digite a senha para ver as confirmações.</p>
@@ -274,7 +274,6 @@
     <div class="acoes">
       <button type="button" id="botao-atualizar">Atualizar</button>
       <button type="button" id="botao-csv">Baixar planilha</button>
-      <button type="button" id="botao-texto">Ver como texto</button>
     </div>
 
     <div class="tabela-scroll">
@@ -288,8 +287,6 @@
         <tbody id="corpo-tabela"></tbody>
       </table>
     </div>
-
-    <textarea id="saida" class="oculto" readonly></textarea>
   </div>
 </main>
 
@@ -575,16 +572,6 @@
     a.click();
     a.remove();
   });
-
-  $("botao-texto").addEventListener("click", mostrarTexto);
-
-  function mostrarTexto(){
-    var saida = $("saida");
-    saida.value = montarCsv();
-    saida.classList.remove("oculto");
-    saida.focus();
-    saida.select();
-  }
 
   atualizarEscolha();
 })();
