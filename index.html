@@ -426,7 +426,11 @@
     var naLista = location.hash.replace("#","").toLowerCase() === "lista";
     $("tela-convite").classList.toggle("oculto", naLista);
     $("tela-lista").classList.toggle("oculto", !naLista);
-    if(naLista) $("senha").focus();
+    if(naLista){
+      $("senha").focus();
+    }else if(location.hash){
+      history.replaceState(null, "", location.pathname + location.search);
+    }
   }
   window.addEventListener("hashchange", verificarRota);
 
