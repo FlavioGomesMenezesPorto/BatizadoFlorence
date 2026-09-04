@@ -108,6 +108,7 @@
   .acoes button{font-family:inherit;font-size:.98rem;background:none;border:1px solid var(--terra);color:var(--terra);padding:.5rem 1rem;border-radius:2px;cursor:pointer}
   .acoes button:hover{background:var(--terra);color:#FFF7F2}
   .ausente td{color:var(--tinta-suave);font-style:italic}
+  tr.separador td{border-bottom:1px solid var(--terra);color:var(--terra);font-weight:500;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;padding-top:1.1rem}
   button.excluir{font-family:inherit;font-size:.85rem;background:none;border:1px solid var(--linha);color:var(--tinta-suave);padding:.3rem .6rem;border-radius:2px;cursor:pointer;white-space:nowrap}
   button.excluir:hover{border-color:#9E3B2C;color:#9E3B2C}
   .oculto{display:none !important}
@@ -484,48 +485,67 @@
     }catch(e){}
   }
 
+  function linhaConvidado(r){
+    var tr = document.createElement("tr");
+    if(!r.vai) tr.className = "ausente";
+    var detalhe = [r.telefone, r.acompanhantes, r.recado].filter(Boolean).join(" · ");
+    tr.appendChild(celula(r.nome + (r.atrasado ? " (fora do prazo)" : "")));
+    tr.appendChild(celula(r.vai ? r.adultos : "—", "num"));
+    tr.appendChild(celula(r.vai ? r.criancas : "—", "num"));
+    tr.appendChild(celula(detalhe || "—"));
+    tr.appendChild(celula(dataCurta(r.atualizado_em || r.criado_em)));
+
+    var tdAcao = document.createElement("td");
+    var botaoExcluir = document.createElement("button");
+    botaoExcluir.type = "button";
+    botaoExcluir.className = "excluir";
+    botaoExcluir.textContent = "Excluir";
+    botaoExcluir.addEventListener("click", function(){ excluirRegistro(r.id, r.nome); });
+    tdAcao.appendChild(botaoExcluir);
+    tr.appendChild(tdAcao);
+
+    return tr;
+  }
+
+  function linhaSeparador(texto){
+    var tr = document.createElement("tr");
+    tr.className = "separador";
+    var td = document.createElement("td");
+    td.colSpan = 6;
+    td.textContent = texto;
+    tr.appendChild(td);
+    return tr;
+  }
+
   function renderizarLista(){
     var corpo = $("corpo-tabela");
-    var registros = listaAtual.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); });
+    var ordenados = listaAtual.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); });
+    var presentes = ordenados.filter(function(r){ return r.vai; });
+    var ausentes = ordenados.filter(function(r){ return !r.vai; });
 
-    var adultos = 0, criancas = 0, ausentes = 0;
-    registros.forEach(function(r){
-      if(r.vai){ adultos += r.adultos; criancas += r.criancas; } else { ausentes++; }
-    });
+    var adultos = 0, criancas = 0;
+    presentes.forEach(function(r){ adultos += r.adultos; criancas += r.criancas; });
 
     $("t-adultos").textContent = adultos;
     $("t-criancas").textContent = criancas;
     $("t-pessoas").textContent = adultos + criancas;
-    $("t-respostas").textContent = registros.length;
-    $("t-ausentes").textContent = ausentes;
+    $("t-respostas").textContent = ordenados.length;
+    $("t-ausentes").textContent = ausentes.length;
 
-    if(!registros.length){
+    if(!ordenados.length){
       corpo.innerHTML = '<tr><td colspan="6">Ninguém respondeu ainda.</td></tr>';
       return;
     }
 
     corpo.innerHTML = "";
-    registros.forEach(function(r){
-      var tr = document.createElement("tr");
-      if(!r.vai) tr.className = "ausente";
-      var detalhe = [r.telefone, r.acompanhantes, r.recado].filter(Boolean).join(" · ");
-      tr.appendChild(celula(r.nome + (r.atrasado ? " (fora do prazo)" : "")));
-      tr.appendChild(celula(r.vai ? r.adultos : "—", "num"));
-      tr.appendChild(celula(r.vai ? r.criancas : "—", "num"));
-      tr.appendChild(celula(detalhe || "—"));
-      tr.appendChild(celula(dataCurta(r.atualizado_em || r.criado_em)));
-
-      var tdAcao = document.createElement("td");
-      var botaoExcluir = document.createElement("button");
-      botaoExcluir.type = "button";
-      botaoExcluir.className = "excluir";
-      botaoExcluir.textContent = "Excluir";
-      botaoExcluir.addEventListener("click", function(){ excluirRegistro(r.id, r.nome); });
-      tdAcao.appendChild(botaoExcluir);
-      tr.appendChild(tdAcao);
-
-      corpo.appendChild(tr);
-    });
+    if(presentes.length){
+      corpo.appendChild(linhaSeparador("Vão (" + presentes.length + ")"));
+      presentes.forEach(function(r){ corpo.appendChild(linhaConvidado(r)); });
+    }
+    if(ausentes.length){
+      corpo.appendChild(linhaSeparador("Não vão (" + ausentes.length + ")"));
+      ausentes.forEach(function(r){ corpo.appendChild(linhaConvidado(r)); });
+    }
   }
 
   async function excluirRegistro(id, nome){
