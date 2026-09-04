@@ -273,7 +273,8 @@
 
     <div class="acoes">
       <button type="button" id="botao-atualizar">Atualizar</button>
-      <button type="button" id="botao-csv">Baixar planilha</button>
+      <button type="button" id="botao-excel">Baixar Excel</button>
+      <button type="button" id="botao-pdf">Baixar PDF</button>
     </div>
 
     <div class="tabela-scroll">
@@ -552,29 +553,72 @@
     }catch(e){ return "—"; }
   }
 
-  function montarCsv(){
-    var linhas = [["Nome","Vai","Adultos","Criancas","Acompanhantes","Telefone","Recado","Respondeu em"]];
-    listaAtual.forEach(function(r){
+  function linhasPlanilha(){
+    var linhas = [["Nome","Vai","Adultos","Crianças","Acompanhantes","Telefone","Recado","Respondeu em"]];
+    listaAtual.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); }).forEach(function(r){
       linhas.push([
-        r.nome, r.vai ? "sim" : "nao", r.vai ? r.adultos : 0, r.vai ? r.criancas : 0,
+        r.nome, r.vai ? "Sim" : "Não", r.vai ? r.adultos : 0, r.vai ? r.criancas : 0,
         r.acompanhantes || "", r.telefone || "", r.recado || "", dataCurta(r.atualizado_em || r.criado_em)
       ]);
     });
-    return linhas.map(function(l){
-      return l.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(";");
-    }).join("\n");
+    return linhas;
+  }
+
+  var scriptsCarregados = {};
+  function carregarScript(src){
+    if(scriptsCarregados[src]) return scriptsCarregados[src];
+    scriptsCarregados[src] = new Promise(function(resolve, reject){
+      var s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    return scriptsCarregados[src];
   }
 
   $("botao-atualizar").addEventListener("click", atualizarLista);
 
-  $("botao-csv").addEventListener("click", function(){
-    var blob = new Blob(["﻿" + montarCsv()], {type:"text/csv;charset=utf-8"});
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "convidados-batizado-florence.csv";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  $("botao-excel").addEventListener("click", async function(){
+    var botao = this;
+    botao.disabled = true;
+    try{
+      await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
+      var ws = XLSX.utils.aoa_to_sheet(linhasPlanilha());
+      ws["!cols"] = [{wch:24},{wch:6},{wch:8},{wch:9},{wch:28},{wch:16},{wch:28},{wch:12}];
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Convidados");
+      XLSX.writeFile(wb, "convidados-batizado-florence.xlsx");
+    }catch(e){
+      alert("Não foi possível gerar o Excel. Verifique a conexão e tente de novo.");
+    }finally{
+      botao.disabled = false;
+    }
+  });
+
+  $("botao-pdf").addEventListener("click", async function(){
+    var botao = this;
+    botao.disabled = true;
+    try{
+      await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+      await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
+      var doc = new jspdf.jsPDF();
+      doc.setFontSize(14);
+      doc.text("Lista de convidados — Batizado da Florence", 14, 16);
+      var linhas = linhasPlanilha().slice(1);
+      doc.autoTable({
+        startY: 22,
+        head: [["Nome","Vai","Ad.","Cri.","Acompanhantes","Telefone","Recado","Respondeu"]],
+        body: linhas,
+        styles: { fontSize: 9, cellPadding: 3 },
+        headStyles: { fillColor: [185, 106, 82] }
+      });
+      doc.save("convidados-batizado-florence.pdf");
+    }catch(e){
+      alert("Não foi possível gerar o PDF. Verifique a conexão e tente de novo.");
+    }finally{
+      botao.disabled = false;
+    }
   });
 
   atualizarEscolha();
