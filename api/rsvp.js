@@ -29,6 +29,26 @@ async function garantirTabela() {
   `;
 }
 
+async function encontrarExistente(nome, telefone) {
+  const telNorm = telefone.replace(/\D/g, "");
+  if (telNorm) {
+    const { rows } = await sql`
+      SELECT id FROM rsvps
+      WHERE regexp_replace(telefone, '\D', '', 'g') = ${telNorm}
+      LIMIT 1
+    `;
+    if (rows[0]) return rows[0].id;
+  }
+
+  const nomeNorm = nome.trim().toLowerCase().replace(/\s+/g, " ");
+  const { rows } = await sql`
+    SELECT id FROM rsvps
+    WHERE lower(trim(nome)) = ${nomeNorm}
+    LIMIT 1
+  `;
+  return rows[0] ? rows[0].id : null;
+}
+
 async function tratarPost(req, res) {
   const corpo = req.body || {};
   const nome = String(corpo.nome || "").trim().slice(0, 200);
@@ -42,7 +62,10 @@ async function tratarPost(req, res) {
   const telefone = String(corpo.telefone || "").trim().slice(0, 40);
   const acompanhantes = vai ? String(corpo.acompanhantes || "").trim().slice(0, 500) : "";
   const recado = String(corpo.recado || "").trim().slice(0, 500);
-  const id = typeof corpo.id === "string" && ID_VALIDO.test(corpo.id) ? corpo.id : novoId();
+  let id = typeof corpo.id === "string" && ID_VALIDO.test(corpo.id) ? corpo.id : null;
+  if (!id) {
+    id = (await encontrarExistente(nome, telefone)) || novoId();
+  }
   const atrasado = new Date() > PRAZO;
 
   const { rows } = await sql`
