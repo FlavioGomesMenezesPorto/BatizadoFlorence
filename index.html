@@ -575,15 +575,20 @@
     }catch(e){ return "—"; }
   }
 
-  function linhasPlanilha(){
-    var linhas = [["Nome","Vai","Adultos","Crianças","Acompanhantes","Telefone","Recado","Respondeu em"]];
-    listaAtual.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); }).forEach(function(r){
-      linhas.push([
-        r.nome, r.vai ? "Sim" : "Não", r.vai ? r.adultos : 0, r.vai ? r.criancas : 0,
-        r.acompanhantes || "", r.telefone || "", r.recado || "", dataCurta(r.atualizado_em || r.criado_em)
-      ]);
-    });
-    return linhas;
+  function gruposPlanilha(){
+    var ordenados = listaAtual.slice().sort(function(a,b){ return a.nome.localeCompare(b.nome, "pt-BR"); });
+    function linhas(lista){
+      return lista.map(function(r){
+        return [
+          r.nome, r.vai ? "Sim" : "Não", r.vai ? r.adultos : 0, r.vai ? r.criancas : 0,
+          r.acompanhantes || "", r.telefone || "", r.recado || "", dataCurta(r.atualizado_em || r.criado_em)
+        ];
+      });
+    }
+    return {
+      presentes: linhas(ordenados.filter(function(r){ return r.vai; })),
+      ausentes: linhas(ordenados.filter(function(r){ return !r.vai; }))
+    };
   }
 
   var scriptsCarregados = {};
@@ -606,7 +611,13 @@
     botao.disabled = true;
     try{
       await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
-      var ws = XLSX.utils.aoa_to_sheet(linhasPlanilha());
+      var grupos = gruposPlanilha();
+      var linhas = [["Nome","Vai","Adultos","Crianças","Acompanhantes","Telefone","Recado","Respondeu em"]];
+      linhas.push(["Vão (" + grupos.presentes.length + ")"]);
+      linhas = linhas.concat(grupos.presentes);
+      linhas.push(["Não vão (" + grupos.ausentes.length + ")"]);
+      linhas = linhas.concat(grupos.ausentes);
+      var ws = XLSX.utils.aoa_to_sheet(linhas);
       ws["!cols"] = [{wch:24},{wch:6},{wch:8},{wch:9},{wch:28},{wch:16},{wch:28},{wch:12}];
       var wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Convidados");
@@ -626,15 +637,36 @@
       await carregarScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js");
       var doc = new jspdf.jsPDF();
       doc.setFontSize(14);
+      doc.setTextColor(69, 56, 51);
       doc.text("Lista de convidados — Batizado da Florence", 14, 16);
-      var linhas = linhasPlanilha().slice(1);
-      doc.autoTable({
-        startY: 22,
-        head: [["Nome","Vai","Ad.","Cri.","Acompanhantes","Telefone","Recado","Respondeu"]],
-        body: linhas,
-        styles: { fontSize: 9, cellPadding: 3 },
-        headStyles: { fillColor: [185, 106, 82] }
-      });
+      var grupos = gruposPlanilha();
+      var cabecalho = ["Nome","Vai","Ad.","Cri.","Acompanhantes","Telefone","Recado","Respondeu"];
+      var y = 24;
+      if(grupos.presentes.length){
+        doc.setFontSize(11);
+        doc.setTextColor(185, 106, 82);
+        doc.text("Vão (" + grupos.presentes.length + ")", 14, y);
+        doc.autoTable({
+          startY: y + 3,
+          head: [cabecalho],
+          body: grupos.presentes,
+          styles: { fontSize: 9, cellPadding: 3 },
+          headStyles: { fillColor: [185, 106, 82] }
+        });
+        y = doc.lastAutoTable.finalY + 10;
+      }
+      if(grupos.ausentes.length){
+        doc.setFontSize(11);
+        doc.setTextColor(185, 106, 82);
+        doc.text("Não vão (" + grupos.ausentes.length + ")", 14, y);
+        doc.autoTable({
+          startY: y + 3,
+          head: [cabecalho],
+          body: grupos.ausentes,
+          styles: { fontSize: 9, cellPadding: 3 },
+          headStyles: { fillColor: [185, 106, 82] }
+        });
+      }
       doc.save("convidados-batizado-florence.pdf");
     }catch(e){
       alert("Não foi possível gerar o PDF. Verifique a conexão e tente de novo.");
