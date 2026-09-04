@@ -55,6 +55,7 @@
 
   h2{font-size:1.55rem;font-weight:500;text-align:center;margin:0 0 .3rem;color:var(--tinta)}
   .prazo{text-align:center;color:var(--tinta-suave);font-size:1rem;margin:0 0 1.9rem}
+  .prazo strong{color:var(--terra);font-weight:600}
 
   label{display:block;margin-bottom:1.15rem}
   .rotulo{display:block;font-size:1rem;color:var(--tinta);margin-bottom:.35rem}
@@ -174,7 +175,7 @@
 
   <div id="area-formulario">
     <h2>Confirme sua presença</h2>
-    <p class="prazo" id="texto-prazo">Responda até 14 de outubro</p>
+    <p class="prazo" id="texto-prazo">Data limite para confirmar: <strong>14/10</strong></p>
 
     <form id="formulario" novalidate>
       <label>
@@ -404,7 +405,7 @@
 
   (async function iniciar(){
     if(foraDoPrazo()){
-      $("texto-prazo").textContent = "O prazo era 14 de outubro, mas ainda dá para avisar.";
+      $("texto-prazo").innerHTML = "A data limite era <strong>14/10</strong>, mas ainda dá para avisar.";
     }
 
     var meuIdSalvo = null;
